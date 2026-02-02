@@ -1,0 +1,9 @@
+# Build outputs
+/build/bin/
+/build/windows/
+/*.exe
+
+# Frontend
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.vite/

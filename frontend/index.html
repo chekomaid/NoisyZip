@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>NoisyZip</title>
+    </head>
+    <body>
+        <div id="app">
+            <header class="topbar">
+                <div class="mode">
+                    <button id="modeEncrypt" class="mode-btn active">
+                        Noise
+                    </button>
+                    <button id="modeDecrypt" class="mode-btn">Recover</button>
+                </div>
+                <div class="meta">
+                    <div class="meta-line">Made by chekomaid</div>
+                    <div class="meta-line">
+                        ETH:
+                        <span
+                            id="ethCopy"
+                            class="copy-target"
+                            data-address="0xD0e86B88449a4f197D90dcAdB9feeEd784aFb345"
+                        >
+                            0xD0e86B88449a4f197D90dcAdB9feeEd784aFb345
+                        </span>
+                    </div>
+                </div>
+            </header>
+
+            <section id="encryptorView" class="grid">
+                <div class="card">
+                    <h2>Paths</h2>
+                    <label class="field">
+                        <span>Input directory</span>
+                        <div class="row">
+                            <input
+                                id="srcDir"
+                                type="text"
+                                placeholder="Choose source folder"
+                                data-lock
+                            />
+                            <button id="browseSrc" class="ghost" data-lock>
+                                Browse
+                            </button>
+                        </div>
+                    </label>
+                    <label class="field">
+                        <span>Output ZIP</span>
+                        <div class="row">
+                            <input
+                                id="outZip"
+                                type="text"
+                                placeholder="Save as..."
+                                data-lock
+                            />
+                            <button id="browseOut" class="ghost" data-lock>
+                                Save
+                            </button>
+                        </div>
+                    </label>
+                    <label class="checkbox">
+                        <input id="includeHidden" type="checkbox" data-lock />
+                        <span>Include hidden files</span>
+                    </label>
+                </div>
+
+                <div class="card">
+                    <h2>Noise</h2>
+                    <div class="two-col">
+                        <label class="checkbox">
+                            <input id="breakCDir" type="checkbox" data-lock />
+                            <span>Overwrite central directory</span>
+                        </label>
+                        <label class="checkbox">
+                            <input id="fixedTime" type="checkbox" data-lock />
+                            <span>Overwrite files timestamp</span>
+                        </label>
+                        <label class="field">
+                            <span>Noise files</span>
+                            <input
+                                id="noiseFiles"
+                                type="number"
+                                min="0"
+                                step="1"
+                                value="0"
+                                data-lock
+                            />
+                        </label>
+                        <label class="field">
+                            <span>Noise size (bytes)</span>
+                            <input
+                                id="noiseSize"
+                                type="number"
+                                min="0"
+                                step="1"
+                                value="0"
+                                data-lock
+                            />
+                        </label>
+                        <label class="field span-2">
+                            <span>ZIP comment junk (bytes)</span>
+                            <input
+                                id="commentSize"
+                                type="number"
+                                min="0"
+                                max="65535"
+                                step="1"
+                                value="0"
+                                data-lock
+                            />
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card span-2">
+                    <h2>Compression</h2>
+                    <div class="two-col">
+                        <label class="field">
+                            <span>Method</span>
+                            <select id="method" data-lock>
+                                <option value="deflate" selected>
+                                    deflate
+                                </option>
+                                <option value="store">store</option>
+                            </select>
+                        </label>
+                        <label class="field">
+                            <span>Encoding</span>
+                            <select id="encoding" data-lock>
+                                <option value="utf-8" selected>utf-8</option>
+                                <option value="cp1251">cp1251</option>
+                            </select>
+                        </label>
+                        <label class="field">
+                            <span>Level</span>
+                            <select id="level" data-lock>
+                                <option>0</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                                <option selected>6</option>
+                                <option>7</option>
+                                <option>8</option>
+                                <option>9</option>
+                            </select>
+                        </label>
+                        <label class="field">
+                            <span>Strategy</span>
+                            <select id="strategy" data-lock>
+                                <option value="default" selected>
+                                    default
+                                </option>
+                                <option value="huffman">huffman</option>
+                            </select>
+                        </label>
+                        <label class="field">
+                            <span>Workers</span>
+                            <input
+                                id="workers"
+                                type="number"
+                                min="1"
+                                step="1"
+                                value="0"
+                                data-lock
+                            />
+                        </label>
+                        <label class="field">
+                            <span>Seed</span>
+                            <input
+                                id="seed"
+                                type="text"
+                                placeholder="(optional)"
+                                data-lock
+                            />
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card span-2 progress-card">
+                    <h2>Progress</h2>
+                    <div class="progress">
+                        <progress id="progress" value="0" max="1"></progress>
+                        <div id="status">Idle</div>
+                    </div>
+                    <div class="actions">
+                        <button id="start" class="primary" data-lock>
+                            Start
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="decryptorView" class="grid hidden">
+                <div class="card span-2">
+                    <h2>Paths</h2>
+                    <label class="field">
+                        <span>Input ZIP</span>
+                        <div class="row">
+                            <input
+                                id="decInZip"
+                                type="text"
+                                placeholder="Choose ZIP file"
+                                data-lock
+                            />
+                            <button id="decBrowseIn" class="ghost" data-lock>
+                                Browse
+                            </button>
+                        </div>
+                    </label>
+                    <label class="field">
+                        <span>Output ZIP</span>
+                        <div class="row">
+                            <input
+                                id="decOutZip"
+                                type="text"
+                                placeholder="Save as..."
+                                data-lock
+                            />
+                            <button id="decBrowseOut" class="ghost" data-lock>
+                                Save
+                            </button>
+                        </div>
+                    </label>
+                    <label class="checkbox">
+                        <input
+                            id="decIncludeHidden"
+                            type="checkbox"
+                            data-lock
+                        />
+                        <span>Include hidden files</span>
+                    </label>
+                </div>
+
+                <div class="card span-2">
+                    <h2>Compression</h2>
+                    <div class="two-col">
+                        <label class="field">
+                            <span>Method</span>
+                            <select id="decMethod" data-lock>
+                                <option value="deflate" selected>
+                                    deflate
+                                </option>
+                                <option value="store">store</option>
+                            </select>
+                        </label>
+                        <label class="field">
+                            <span>Encoding</span>
+                            <select id="decEncoding" data-lock>
+                                <option value="utf-8" selected>utf-8</option>
+                                <option value="cp1251">cp1251</option>
+                            </select>
+                        </label>
+                        <label class="field">
+                            <span>Level</span>
+                            <select id="decLevel" data-lock>
+                                <option>0</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                                <option selected>6</option>
+                                <option>7</option>
+                                <option>8</option>
+                                <option>9</option>
+                            </select>
+                        </label>
+                        <label class="field">
+                            <span>Strategy</span>
+                            <select id="decStrategy" data-lock>
+                                <option value="default" selected>
+                                    default
+                                </option>
+                                <option value="huffman">huffman</option>
+                            </select>
+                        </label>
+                        <label class="field">
+                            <span>Workers</span>
+                            <input
+                                id="decWorkers"
+                                type="number"
+                                min="1"
+                                step="1"
+                                value="0"
+                                data-lock
+                            />
+                        </label>
+                        <label class="field">
+                            <span>Seed</span>
+                            <input
+                                id="decSeed"
+                                type="text"
+                                placeholder="(optional)"
+                                data-lock
+                            />
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card span-2 progress-card">
+                    <h2>Progress</h2>
+                    <div class="progress">
+                        <progress id="decProgress" value="0" max="1"></progress>
+                        <div id="decStatus">Idle</div>
+                    </div>
+                    <div class="actions">
+                        <button id="decStart" class="primary" data-lock>
+                            Start
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <script type="module" src="/src/main.js"></script>
+    </body>
+</html>

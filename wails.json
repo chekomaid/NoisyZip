@@ -1,0 +1,11 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "noisyzip",
+  "outputfilename": "noisyzip",
+  "frontend": {
+    "dir": "frontend",
+    "install": "npm install",
+    "build": "npm run build"
+  },
+  "wailsjsdir": "frontend/src"
+}
