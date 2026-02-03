@@ -98,7 +98,7 @@ Recover config (example):
 
 ## Installation (Linux)
 ```bash
-curl -L -o /usr/local/bin/noisyzip "https://github.com/chekomaid/NoisyZip/releases/latest/download/noisyzip_linux_$([[ "$(uname -m)" == "x86_64" ]] && echo "amd64" || echo "arm64")"
+curl -L -o /usr/local/bin/noisyzip "https://github.com/chekomaid/NoisyZip/releases/latest/download/noisyzip-linux-$([[ "$(uname -m)" == "x86_64" ]] && echo "amd64" || echo "arm64")"
 sudo chmod u+x /usr/local/bin/noisyzip
 ```
 
