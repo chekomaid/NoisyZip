@@ -1,4 +1,4 @@
-module zip-noise-rebuilder
+module noisyzip
 
 go 1.25.5
 

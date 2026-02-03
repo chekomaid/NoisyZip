@@ -12,7 +12,7 @@
                     <button id="modeEncrypt" class="mode-btn active">
                         Noise
                     </button>
-                    <button id="modeDecrypt" class="mode-btn">Recover</button>
+                    <button id="modeRecover" class="mode-btn">Recover</button>
                 </div>
                 <div class="meta">
                     <div class="meta-line">Made by chekomaid</div>
@@ -70,7 +70,12 @@
                     <h2>Noise</h2>
                     <div class="two-col">
                         <label class="checkbox">
-                            <input id="breakCDir" type="checkbox" data-lock />
+                            <input
+                                id="overwriteCentralDir"
+                                type="checkbox"
+                                checked
+                                data-lock
+                            />
                             <span>Overwrite central directory</span>
                         </label>
                         <label class="checkbox">
@@ -194,19 +199,19 @@
                 </div>
             </section>
 
-            <section id="decryptorView" class="grid hidden">
+            <section id="recoverView" class="grid hidden">
                 <div class="card span-2">
                     <h2>Paths</h2>
                     <label class="field">
                         <span>Input ZIP</span>
                         <div class="row">
                             <input
-                                id="decInZip"
+                                id="recInZip"
                                 type="text"
                                 placeholder="Choose ZIP file"
                                 data-lock
                             />
-                            <button id="decBrowseIn" class="ghost" data-lock>
+                            <button id="recBrowseIn" class="ghost" data-lock>
                                 Browse
                             </button>
                         </div>
@@ -215,19 +220,19 @@
                         <span>Output ZIP</span>
                         <div class="row">
                             <input
-                                id="decOutZip"
+                                id="recOutZip"
                                 type="text"
                                 placeholder="Save as..."
                                 data-lock
                             />
-                            <button id="decBrowseOut" class="ghost" data-lock>
+                            <button id="recBrowseOut" class="ghost" data-lock>
                                 Save
                             </button>
                         </div>
                     </label>
                     <label class="checkbox">
                         <input
-                            id="decIncludeHidden"
+                            id="recIncludeHidden"
                             type="checkbox"
                             data-lock
                         />
@@ -240,7 +245,7 @@
                     <div class="two-col">
                         <label class="field">
                             <span>Method</span>
-                            <select id="decMethod" data-lock>
+                            <select id="recMethod" data-lock>
                                 <option value="deflate" selected>
                                     deflate
                                 </option>
@@ -249,14 +254,14 @@
                         </label>
                         <label class="field">
                             <span>Encoding</span>
-                            <select id="decEncoding" data-lock>
+                            <select id="recEncoding" data-lock>
                                 <option value="utf-8" selected>utf-8</option>
                                 <option value="cp1251">cp1251</option>
                             </select>
                         </label>
                         <label class="field">
                             <span>Level</span>
-                            <select id="decLevel" data-lock>
+                            <select id="recLevel" data-lock>
                                 <option>0</option>
                                 <option>1</option>
                                 <option>2</option>
@@ -271,7 +276,7 @@
                         </label>
                         <label class="field">
                             <span>Strategy</span>
-                            <select id="decStrategy" data-lock>
+                            <select id="recStrategy" data-lock>
                                 <option value="default" selected>
                                     default
                                 </option>
@@ -281,7 +286,7 @@
                         <label class="field">
                             <span>Workers</span>
                             <input
-                                id="decWorkers"
+                                id="recWorkers"
                                 type="number"
                                 min="1"
                                 step="1"
@@ -292,7 +297,7 @@
                         <label class="field">
                             <span>Seed</span>
                             <input
-                                id="decSeed"
+                                id="recSeed"
                                 type="text"
                                 placeholder="(optional)"
                                 data-lock
@@ -304,11 +309,11 @@
                 <div class="card span-2 progress-card">
                     <h2>Progress</h2>
                     <div class="progress">
-                        <progress id="decProgress" value="0" max="1"></progress>
-                        <div id="decStatus">Idle</div>
+                        <progress id="recProgress" value="0" max="1"></progress>
+                        <div id="recStatus">Idle</div>
                     </div>
                     <div class="actions">
-                        <button id="decStart" class="primary" data-lock>
+                        <button id="recStart" class="primary" data-lock>
                             Start
                         </button>
                     </div>

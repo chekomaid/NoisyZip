@@ -6,8 +6,8 @@ import {
   SelectInputZip,
   SelectOutputDir,
   RunEncrypt,
-  RunDecrypt,
-} from "./wailsjs/go/main/App";
+  RunRecover,
+} from "./wailsjs/go/gui/App";
 
 const themeMedia = window.matchMedia("(prefers-color-scheme: light)");
 const root = document.documentElement;
@@ -36,7 +36,7 @@ const enc = {
   strategy: document.getElementById("strategy"),
   workers: document.getElementById("workers"),
   seed: document.getElementById("seed"),
-  breakCDir: document.getElementById("breakCDir"),
+  overwriteCentralDir: document.getElementById("overwriteCentralDir"),
   fixedTime: document.getElementById("fixedTime"),
   noiseFiles: document.getElementById("noiseFiles"),
   noiseSize: document.getElementById("noiseSize"),
@@ -46,41 +46,41 @@ const enc = {
   start: document.getElementById("start"),
 };
 
-const dec = {
-  view: document.getElementById("decryptorView"),
-  inZip: document.getElementById("decInZip"),
-  outZip: document.getElementById("decOutZip"),
-  browseIn: document.getElementById("decBrowseIn"),
-  browseOut: document.getElementById("decBrowseOut"),
-  includeHidden: document.getElementById("decIncludeHidden"),
-  method: document.getElementById("decMethod"),
-  encoding: document.getElementById("decEncoding"),
-  level: document.getElementById("decLevel"),
-  strategy: document.getElementById("decStrategy"),
-  workers: document.getElementById("decWorkers"),
-  seed: document.getElementById("decSeed"),
-  progress: document.getElementById("decProgress"),
-  status: document.getElementById("decStatus"),
-  start: document.getElementById("decStart"),
+const rec = {
+  view: document.getElementById("recoverView"),
+  inZip: document.getElementById("recInZip"),
+  outZip: document.getElementById("recOutZip"),
+  browseIn: document.getElementById("recBrowseIn"),
+  browseOut: document.getElementById("recBrowseOut"),
+  includeHidden: document.getElementById("recIncludeHidden"),
+  method: document.getElementById("recMethod"),
+  encoding: document.getElementById("recEncoding"),
+  level: document.getElementById("recLevel"),
+  strategy: document.getElementById("recStrategy"),
+  workers: document.getElementById("recWorkers"),
+  seed: document.getElementById("recSeed"),
+  progress: document.getElementById("recProgress"),
+  status: document.getElementById("recStatus"),
+  start: document.getElementById("recStart"),
 };
 
 const modeEncrypt = document.getElementById("modeEncrypt");
-const modeDecrypt = document.getElementById("modeDecrypt");
+const modeRecover = document.getElementById("modeRecover");
 const ethCopy = document.getElementById("ethCopy");
 
 const encLockables = document.querySelectorAll("#encryptorView [data-lock]");
-const decLockables = document.querySelectorAll("#decryptorView [data-lock]");
+const recLockables = document.querySelectorAll("#recoverView [data-lock]");
 
 function setMode(mode) {
   const isEncrypt = mode === "encrypt";
   enc.view.classList.toggle("hidden", !isEncrypt);
-  dec.view.classList.toggle("hidden", isEncrypt);
+  rec.view.classList.toggle("hidden", isEncrypt);
   modeEncrypt.classList.toggle("active", isEncrypt);
-  modeDecrypt.classList.toggle("active", !isEncrypt);
+  modeRecover.classList.toggle("active", !isEncrypt);
 }
 
 modeEncrypt.addEventListener("click", () => setMode("encrypt"));
-modeDecrypt.addEventListener("click", () => setMode("decrypt"));
+modeRecover.addEventListener("click", () => setMode("recover"));
 setMode("encrypt");
 
 async function copyText(text) {
@@ -139,14 +139,14 @@ enc.method.addEventListener("change", () =>
 );
 updateDeflateControls(enc.method, enc.level, enc.strategy);
 
-dec.method.addEventListener("change", () =>
-  updateDeflateControls(dec.method, dec.level, dec.strategy),
+rec.method.addEventListener("change", () =>
+  updateDeflateControls(rec.method, rec.level, rec.strategy),
 );
-updateDeflateControls(dec.method, dec.level, dec.strategy);
+updateDeflateControls(rec.method, rec.level, rec.strategy);
 
 const cpuCount = navigator.hardwareConcurrency || 4;
 enc.workers.value = cpuCount;
-dec.workers.value = cpuCount;
+rec.workers.value = cpuCount;
 
 enc.browseSrc.addEventListener("click", async () => {
   const path = await SelectSourceDir();
@@ -162,17 +162,17 @@ enc.browseOut.addEventListener("click", async () => {
   }
 });
 
-dec.browseIn.addEventListener("click", async () => {
+rec.browseIn.addEventListener("click", async () => {
   const path = await SelectInputZip();
   if (path) {
-    dec.inZip.value = path;
+    rec.inZip.value = path;
   }
 });
 
-dec.browseOut.addEventListener("click", async () => {
+rec.browseOut.addEventListener("click", async () => {
   const path = await SelectOutputZip();
   if (path) {
-    dec.outZip.value = path;
+    rec.outZip.value = path;
   }
 });
 
@@ -193,21 +193,21 @@ EventsOn("encrypt:progress", (payload) => {
   setStatus(enc.status, `${done}/${total}: ${name}`);
 });
 
-EventsOn("decrypt:log", (msg) => {
+EventsOn("recover:log", (msg) => {
   if (typeof msg === "string" && msg.trim()) {
-    setStatus(dec.status, msg);
+    setStatus(rec.status, msg);
   }
 });
 
-EventsOn("decrypt:progress", (payload) => {
+EventsOn("recover:progress", (payload) => {
   if (!payload) return;
   const done = payload.done ?? 0;
   const total = payload.total ?? 0;
   const name = payload.name ?? "";
   if (total > 0) {
-    dec.progress.value = done / total;
+    rec.progress.value = done / total;
   }
-  setStatus(dec.status, `${done}/${total}: ${name}`);
+  setStatus(rec.status, `${done}/${total}: ${name}`);
 });
 
 enc.start.addEventListener("click", async () => {
@@ -250,7 +250,7 @@ enc.start.addEventListener("click", async () => {
     outZip,
     compression: enc.method.value,
     encoding: enc.encoding.value,
-    breakCDir: enc.breakCDir.checked,
+    overwriteCentralDir: enc.overwriteCentralDir.checked,
     commentSize,
     fixedTime: enc.fixedTime.checked,
     noiseFiles,
@@ -275,54 +275,54 @@ enc.start.addEventListener("click", async () => {
   }
 });
 
-dec.start.addEventListener("click", async () => {
-  const inZip = dec.inZip.value.trim();
-  const outZip = dec.outZip.value.trim();
+rec.start.addEventListener("click", async () => {
+  const inZip = rec.inZip.value.trim();
+  const outZip = rec.outZip.value.trim();
   if (!inZip || !outZip) {
-    setStatus(dec.status, "Choose input ZIP and output ZIP.");
+    setStatus(rec.status, "Choose input ZIP and output ZIP.");
     return;
   }
 
-  const level = parseNumber(dec.level.value, 6);
-  const workers = parseNumber(dec.workers.value, cpuCount);
+  const level = parseNumber(rec.level.value, 6);
+  const workers = parseNumber(rec.workers.value, cpuCount);
 
   if (level < 0 || level > 9) {
-    setStatus(dec.status, "Compression level must be 0..9.");
+    setStatus(rec.status, "Compression level must be 0..9.");
     return;
   }
   if (workers < 1) {
-    setStatus(dec.status, "Workers must be >= 1.");
+    setStatus(rec.status, "Workers must be >= 1.");
     return;
   }
 
-  dec.progress.value = 0;
-  setStatus(dec.status, "Starting...");
-  setRunning(decLockables, true);
+  rec.progress.value = 0;
+  setStatus(rec.status, "Starting...");
+  setRunning(recLockables, true);
 
   const cfg = {
     inZip,
     outZip,
-    compression: dec.method.value,
-    encoding: dec.encoding.value,
+    compression: rec.method.value,
+    encoding: rec.encoding.value,
     level,
-    strategy: dec.strategy.value,
+    strategy: rec.strategy.value,
     dictSize: 32768,
     workers,
-    seed: dec.seed.value.trim(),
-    includeHidden: dec.includeHidden.checked,
+    seed: rec.seed.value.trim(),
+    includeHidden: rec.includeHidden.checked,
   };
 
   try {
-    const result = await RunDecrypt(cfg);
+    const result = await RunRecover(cfg);
     setStatus(
-      dec.status,
+      rec.status,
       `Recovered: ${result.recovered}, ZIP files: ${result.rebuilt}`,
     );
-    dec.progress.value = 1;
+    rec.progress.value = 1;
   } catch (err) {
     const message = err?.message || String(err);
-    setStatus(dec.status, `Error: ${message}`);
+    setStatus(rec.status, `Error: ${message}`);
   } finally {
-    setRunning(decLockables, false);
+    setRunning(recLockables, false);
   }
 });

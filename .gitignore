@@ -1,6 +1,7 @@
 # Build outputs
 /build/bin/
 /build/windows/
+/build/cli/
 /*.exe
 
 # Frontend

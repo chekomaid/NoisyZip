@@ -1,55 +1,11 @@
-export namespace main {
+export namespace gui {
 	
-	export class DecryptConfig {
-	    inZip: string;
-	    outZip: string;
-	    compression: string;
-	    encoding: string;
-	    level: number;
-	    strategy: string;
-	    dictSize: number;
-	    workers: number;
-	    seed: string;
-	    includeHidden: boolean;
-	
-	    static createFrom(source: any = {}) {
-	        return new DecryptConfig(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.inZip = source["inZip"];
-	        this.outZip = source["outZip"];
-	        this.compression = source["compression"];
-	        this.encoding = source["encoding"];
-	        this.level = source["level"];
-	        this.strategy = source["strategy"];
-	        this.dictSize = source["dictSize"];
-	        this.workers = source["workers"];
-	        this.seed = source["seed"];
-	        this.includeHidden = source["includeHidden"];
-	    }
-	}
-	export class DecryptResult {
-	    recovered: number;
-	    rebuilt: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new DecryptResult(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.recovered = source["recovered"];
-	        this.rebuilt = source["rebuilt"];
-	    }
-	}
 	export class EncryptConfig {
 	    srcDir: string;
 	    outZip: string;
 	    compression: string;
 	    encoding: string;
-	    breakCDir: boolean;
+	    overwriteCentralDir: boolean;
 	    commentSize: number;
 	    fixedTime: boolean;
 	    noiseFiles: number;
@@ -71,7 +27,7 @@ export namespace main {
 	        this.outZip = source["outZip"];
 	        this.compression = source["compression"];
 	        this.encoding = source["encoding"];
-	        this.breakCDir = source["breakCDir"];
+	        this.overwriteCentralDir = source["overwriteCentralDir"];
 	        this.commentSize = source["commentSize"];
 	        this.fixedTime = source["fixedTime"];
 	        this.noiseFiles = source["noiseFiles"];
@@ -96,6 +52,50 @@ export namespace main {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.total = source["total"];
 	        this.outZip = source["outZip"];
+	    }
+	}
+	export class RecoverConfig {
+	    inZip: string;
+	    outZip: string;
+	    compression: string;
+	    encoding: string;
+	    level: number;
+	    strategy: string;
+	    dictSize: number;
+	    workers: number;
+	    seed: string;
+	    includeHidden: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new RecoverConfig(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.inZip = source["inZip"];
+	        this.outZip = source["outZip"];
+	        this.compression = source["compression"];
+	        this.encoding = source["encoding"];
+	        this.level = source["level"];
+	        this.strategy = source["strategy"];
+	        this.dictSize = source["dictSize"];
+	        this.workers = source["workers"];
+	        this.seed = source["seed"];
+	        this.includeHidden = source["includeHidden"];
+	    }
+	}
+	export class RecoverResult {
+	    recovered: number;
+	    rebuilt: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new RecoverResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.recovered = source["recovered"];
+	        this.rebuilt = source["rebuilt"];
 	    }
 	}
 

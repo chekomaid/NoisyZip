@@ -133,17 +133,17 @@ body {
     align-content: start;
 }
 
-#decryptorView {
-    grid-template-rows: auto auto 1fr;
-    align-content: stretch;
+#recoverView {
+    grid-template-rows: auto auto auto;
+    align-content: start;
 }
 
-#decryptorView .progress-card {
+#recoverView .progress-card {
     display: flex;
     flex-direction: column;
 }
 
-#decryptorView .progress-card .actions {
+#recoverView .progress-card .actions {
     margin-top: auto;
 }
 
@@ -282,7 +282,7 @@ progress::-webkit-progress-value {
 }
 
 #status,
-#decStatus {
+#recStatus {
     color: var(--muted);
     font-size: 10px;
     line-height: 1.4;
