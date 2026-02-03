@@ -3,6 +3,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$versionLdflags = "-X noisyzip/internal/cli.Version=2.1"
 
 function Has-WailsOutputFlag {
     param([string[]]$Args)
@@ -106,8 +107,42 @@ function Remove-WailsFlagWithValue {
     return $out
 }
 
+function Ensure-Ldflags {
+    param([string[]]$Args, [string]$Extra)
+    $out = @()
+    $handled = $false
+    for ($i = 0; $i -lt $Args.Length; $i++) {
+        $arg = $Args[$i]
+        if ($arg -eq "-ldflags" -and ($i + 1) -lt $Args.Length) {
+            $flags = $Args[$i + 1]
+            if (-not ($flags -like "*$Extra*")) {
+                $flags = "$flags $Extra"
+            }
+            $out += @("-ldflags", $flags)
+            $i++
+            $handled = $true
+            continue
+        }
+        if ($arg -like "-ldflags=*") {
+            $flags = $arg.Substring(9)
+            if (-not ($flags -like "*$Extra*")) {
+                $flags = "$flags $Extra"
+            }
+            $out += "-ldflags=$flags"
+            $handled = $true
+            continue
+        }
+        $out += $arg
+    }
+    if (-not $handled) {
+        $out += @("-ldflags", $Extra)
+    }
+    return $out
+}
+
 $WailsArgs = Ensure-GuiTags -Args $WailsArgs
 $WailsArgs = Ensure-CleanFlag -Args $WailsArgs
+$WailsArgs = Ensure-Ldflags -Args $WailsArgs -Extra $versionLdflags
 
 $prevGOFLAGS = $env:GOFLAGS
 try {
@@ -132,7 +167,7 @@ try {
         return
     }
 
-    $baseArgs = @("-tags", "gui")
+    $baseArgs = @("-tags", "gui", "-ldflags", $versionLdflags)
     $cleanArgs = @("-clean")
 
     $targets = @(

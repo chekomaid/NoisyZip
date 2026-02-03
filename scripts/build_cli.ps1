@@ -4,6 +4,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$ldflags = "-X noisyzip/internal/cli.Version=2.1"
 
 function Resolve-RepoRoot {
     $root = Join-Path $PSScriptRoot ".."
@@ -36,7 +37,7 @@ try {
 
         $outfile = Join-Path $outPath ("{0}-{1}-{2}{3}" -f $Name, $t.os, $t.arch, $t.ext)
         Write-Host ("Building {0}/{1} -> {2}" -f $t.os, $t.arch, $outfile)
-        go build -o $outfile .
+        go build -ldflags $ldflags -o $outfile .
     }
 }
 finally {

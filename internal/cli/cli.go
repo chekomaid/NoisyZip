@@ -31,6 +31,9 @@ func Main(args []string) int {
 	case "help", "-h", "--help":
 		printHelp(os.Stdout)
 		return 0
+	case "version", "-v", "--version":
+		printVersion(os.Stdout)
+		return 0
 	case "recover":
 		return runRecover(args[1:])
 	default:
@@ -161,13 +164,13 @@ func newRecoverFlagSet(output io.Writer) (*flag.FlagSet, *recoverOptions) {
 }
 
 func printHelp(w io.Writer) {
-	fmt.Fprintln(w, "NoisyZip CLI")
-	fmt.Fprintln(w, "")
 	fmt.Fprintln(w, "Usage:")
+	fmt.Fprintln(w, "  noisyzip -v")
 	fmt.Fprintln(w, "  noisyzip -src <dir> -out <zip> [options]")
 	fmt.Fprintln(w, "  noisyzip recover -in <zip> -out <zip> [options]")
 	fmt.Fprintln(w, "")
 	fmt.Fprintln(w, "Run noisyzip -h or noisyzip recover -h for options.")
+	fmt.Fprintln(w, "GitHub: https://github.com/chekomaid/NoisyZip/")
 }
 
 func printEncryptHelp(w io.Writer) {
